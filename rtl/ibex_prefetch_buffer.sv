@@ -305,6 +305,6 @@ module ibex_prefetch_buffer #(
   assign instr_req_o  = valid_req;
   assign instr_addr_o = instr_addr_w_aligned;
 
-  assign valid_o = valid_raw;
+  assign valid_o = valid_raw & ~branch_mispredict_i;
 
 endmodule

@@ -566,7 +566,7 @@ module ibex_if_stage import ibex_pkg::*; #(
     // pc_set_i takes precendence over branch prediction
     assign predicted_branch = predict_branch_taken & ~pc_set_i;
 
-    assign if_instr_valid   = fetch_valid | instr_skid_valid_q;
+    assign if_instr_valid   = fetch_valid | (instr_skid_valid_q & ~nt_branch_mispredict_i);
     assign if_instr_rdata   = instr_skid_valid_q ? instr_skid_data_q : fetch_rdata;
     assign if_instr_addr    = instr_skid_valid_q ? instr_skid_addr_q : fetch_addr;
 

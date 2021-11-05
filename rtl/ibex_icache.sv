@@ -1076,7 +1076,7 @@ module ibex_icache import ibex_pkg::*; #(
     end
   end
 
-  assign valid_o     = output_valid;
+  assign valid_o     = output_valid & ~branch_mispredict_i;
   assign rdata_o     = {output_data_hi, (skid_valid_q ? skid_data_q : output_data_lo)};
   assign addr_o      = {output_addr_q, 1'b0};
   assign err_o       = (skid_valid_q & skid_err_q) | (~skid_complete_instr & output_err);
