@@ -82,7 +82,7 @@ module ibex_if_stage import ibex_pkg::*; #(
   input  pc_sel_e                     pc_mux_i,                 // selector for PC multiplexer
   input  logic                        nt_branch_mispredict_i,   // Not-taken branch in ID/EX was
                                                                 // mispredicted (predicted taken)
-  input  logic [31:0]                 nt_branch_addr_i,         // Address of not-taken branch in ID/EX
+  input  logic [31:0]                 nt_branch_addr_i,         // Not-taken branch address in ID/EX
   input  exc_pc_sel_e                 exc_pc_mux_i,             // selects ISR address
   input  exc_cause_e                  exc_cause,                // selects ISR address for
                                                                 // vectorized interrupt lines
