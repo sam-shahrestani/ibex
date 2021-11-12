@@ -483,7 +483,6 @@ module ibex_if_stage import ibex_pkg::*; #(
     logic        instr_skid_en;
     logic        instr_bp_taken_q, instr_bp_taken_d;
 
-    logic        predicted_branch;
     logic        predict_branch_taken_raw;
 
     // ID stages needs to know if branch was predicted taken so it can signal mispredicts
@@ -511,7 +510,7 @@ module ibex_if_stage import ibex_pkg::*; #(
     // data_gnt_i -> instr_req_o (which needs to be avoided as for some interconnects this will
     // result in a combinational loop).
 
-    assign instr_skid_en = predicted_branch & ~id_in_ready_i & ~instr_skid_valid_q;
+    assign instr_skid_en = predict_branch_taken & ~pc_set_i & ~id_in_ready_i & ~instr_skid_valid_q;
 
     assign instr_skid_valid_d = (instr_skid_valid_q & ~id_in_ready_i & ~stall_dummy_instr) |
                                 instr_skid_en;
@@ -562,9 +561,6 @@ module ibex_if_stage import ibex_pkg::*; #(
     // so with the skid valid any prediction has already occurred.
     // Do not branch predict on instruction errors.
     assign predict_branch_taken = predict_branch_taken_raw & ~instr_skid_valid_q & ~fetch_err;
-
-    // pc_set_i takes precendence over branch prediction
-    assign predicted_branch = predict_branch_taken & ~pc_set_i;
 
     assign if_instr_valid   = fetch_valid | (instr_skid_valid_q & ~nt_branch_mispredict_i);
     assign if_instr_rdata   = instr_skid_valid_q ? instr_skid_data_q : fetch_rdata;
@@ -635,6 +631,11 @@ module ibex_if_stage import ibex_pkg::*; #(
     logic mispredicted, mispredicted_d, mispredicted_q;
 
     assign next_pc = fetch_addr + (instr_is_compressed_out ? 32'd2 : 32'd4);
+
+    logic predicted_branch;
+
+    // pc_set_i takes precendence over branch prediction
+    assign predicted_branch = predict_branch_taken & ~pc_set_i;
 
     always_comb begin
       predicted_branch_live_d = predicted_branch_live_q;
